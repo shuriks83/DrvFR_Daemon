@@ -91,7 +91,7 @@ namespace DrvFR_Daemon
 
                 MessageBox.Show("Драйвер DrvFR не найден!\nПрограмма будет закрыта.",
                     "KKT Daemon", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                Application.Exit();
+                Exit();
             }
 
             if (dk1.GetShortECRStatus() == false)
@@ -115,21 +115,14 @@ namespace DrvFR_Daemon
 
             NamedPipeServerStream pipe = new NamedPipeServerStream(pipeName, PipeDirection.InOut, 1, PipeTransmissionMode.Message, PipeOptions.None, 512, 512);
 
-//            StreamReader reader = new StreamReader(pipe, Encoding.UTF8);
-  //          StreamWriter writer = new StreamWriter(pipe, Encoding.UTF8);
-    //        writer.AutoFlush = true;
-
             while (!stopRequested)
             {
-//                StreamReader reader = null;
-  //              StreamWriter writer = null;
-
                 try
                 {
                     pipe.WaitForConnection();
 
-                                        StreamReader reader = new StreamReader(pipe, Encoding.UTF8);
-                                      StreamWriter writer = new StreamWriter(pipe, Encoding.UTF8);
+                    StreamReader reader = new StreamReader(pipe, Encoding.UTF8);
+                    StreamWriter writer = new StreamWriter(pipe, Encoding.UTF8);
                     writer.AutoFlush = true;
 
                     string line = reader.ReadLine();
@@ -172,15 +165,11 @@ namespace DrvFR_Daemon
                         reader.Close();
                         reader.Dispose();
                     }
-                    if (pipe != null)
-                    {
-                        if (pipe.IsConnected)
-                            pipe.Disconnect();
-                        pipe.Dispose();
-                    }
                      */
+
                     if (pipe.IsConnected)
                         pipe.Disconnect();
+
 //                  System.Threading.Thread.Sleep(200);
                 }
             }
