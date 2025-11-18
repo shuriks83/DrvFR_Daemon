@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.IO;
 using System.IO.Pipes;
 using System.Text;
@@ -114,29 +113,23 @@ namespace DrvFR_Daemon
             logger.Write("KKT Daemon запущен...");
             logger.Separator();
 
+            NamedPipeServerStream pipe = new NamedPipeServerStream(pipeName, PipeDirection.InOut, 1, PipeTransmissionMode.Message, PipeOptions.None, 512, 512);
+
+//            StreamReader reader = new StreamReader(pipe, Encoding.UTF8);
+  //          StreamWriter writer = new StreamWriter(pipe, Encoding.UTF8);
+    //        writer.AutoFlush = true;
+
             while (!stopRequested)
             {
-                NamedPipeServerStream pipe = null;
-                StreamReader reader = null;
-                StreamWriter writer = null;
+//                StreamReader reader = null;
+  //              StreamWriter writer = null;
 
                 try
                 {
-                    pipe = new NamedPipeServerStream(pipeName, PipeDirection.InOut, 1, PipeTransmissionMode.Message, PipeOptions.None, 512, 512);
-
                     pipe.WaitForConnection();
-/*
-                    var ar = pipe.BeginWaitForConnection(null, null);
-                    if (!ar.AsyncWaitHandle.WaitOne(900))   // ждём 300 мс
-                    {
-                        pipe.Dispose();                       // никого нет → закрываем пайп
-                        continue;                            // новая попытка
-                    }
 
-                    pipe.EndWaitForConnection(ar);          // клиент подключился
-*/
-                    reader = new StreamReader(pipe, Encoding.UTF8);
-                    writer = new StreamWriter(pipe, Encoding.UTF8);
+                                        StreamReader reader = new StreamReader(pipe, Encoding.UTF8);
+                                      StreamWriter writer = new StreamWriter(pipe, Encoding.UTF8);
                     writer.AutoFlush = true;
 
                     string line = reader.ReadLine();
@@ -147,7 +140,7 @@ namespace DrvFR_Daemon
 
                     if (parts.Length < 2)
                     {
-                        writer.WriteLine(FormatResult(false, "01"));    // Код ошибки: недостаточно аргументов
+                        writer.WriteLine(FormatResult(false, "$01"));    // Код ошибки: недостаточно аргументов
                         writer.Flush();
                         continue;
                     }
@@ -168,6 +161,7 @@ namespace DrvFR_Daemon
                 }
                 finally
                 {
+                    /*
                     if (writer != null)
                     {
                         writer.Close();
@@ -184,7 +178,9 @@ namespace DrvFR_Daemon
                             pipe.Disconnect();
                         pipe.Dispose();
                     }
-
+                     */
+                    if (pipe.IsConnected)
+                        pipe.Disconnect();
 //                  System.Threading.Thread.Sleep(200);
                 }
             }
@@ -201,12 +197,11 @@ namespace DrvFR_Daemon
                 switch (commandCode)
                 {
                     case "$666":
-//                        dk1.ShowProperties();
                         dk1.AboutBox();
                         break;
 
-                    case "$01":
-                        // TestDriver(dk1); // Тест драйвера
+                    case "$667":
+                        dk1.ShowProperties();
                         break;
 
                     case "$12":  // Печать широкой строки (30)
@@ -371,16 +366,16 @@ namespace DrvFR_Daemon
                         return FormatResult(dk1.WriteTable(table, row, field, value), commandCode, dk1.ResultCode.ToString());
 
                     default:
-                        return FormatResult(false, "88", "03");
+                        return FormatResult(false, "$88", "03");
                 }
             }
             catch (Exception /*ex*/)
             {
                 //                Console.WriteLine("Ошибка: " + ex.Message);
-                return FormatResult(false, "88", "99"); // Общий код ошибки
+                return FormatResult(false, "$88", "99"); // Общий код ошибки
             }
 
-            return FormatResult(false, "88"); // Все ОК
+            return FormatResult(false, "$88", "00"); // Все ОК
         }
 
         // вывод результата и формат ответа

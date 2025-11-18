@@ -125,7 +125,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="logo.ico" />
-    <None Include="Resources\dk.ico" />
     <None Include="Resources\logo.ico" />
   </ItemGroup>
   <ItemGroup />

@@ -63,16 +63,6 @@ namespace DrvFR_Daemon.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Значок).
         /// </summary>
-        internal static System.Drawing.Icon dk {
-            get {
-                object obj = ResourceManager.GetObject("dk", resourceCulture);
-                return ((System.Drawing.Icon)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Значок).
-        /// </summary>
         internal static System.Drawing.Icon logo {
             get {
                 object obj = ResourceManager.GetObject("logo", resourceCulture);
